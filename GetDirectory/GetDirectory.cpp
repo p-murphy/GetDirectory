@@ -56,9 +56,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	PrintCurrentDirectory();
 
 	std::cout << "/////////////////////" << std::endl;
-
-	MoveToParentDirectory();
-
 	std::cout << "/////////////////////" << std::endl;
 
 	MenuSelection(workingDirectory);
@@ -146,7 +143,7 @@ void MoveToParentDirectory()
 	char* currentDirectory = _getcwd(directoryBuffer, sizeof(directoryBuffer));
 	int currentDirectoryLength = strlen(currentDirectory);
 
-	std::cout << "Last char in currentDirectory is: " << currentDirectory[currentDirectoryLength - 1] << std::endl;
+	//std::cout << "Last char in currentDirectory is: " << currentDirectory[currentDirectoryLength - 1] << std::endl;
 
 	if (currentDirectory[currentDirectoryLength - 1] == '\\')
 	{
@@ -167,15 +164,18 @@ void MoveToParentDirectory()
 
 	int delta = currentDirectoryLength - currentDirectoryNameLength;
 
-	std::cout << "currentDirectoryNameLength is: " << currentDirectoryNameLength << std::endl;
-	std::cout << "currentDirectoryLength is: " << currentDirectoryLength << std::endl;
-	std::cout << "delta is: " << delta << std::endl;
+	//std::cout << "currentDirectoryNameLength is: " << currentDirectoryNameLength << std::endl;
+	//std::cout << "currentDirectoryLength is: " << currentDirectoryLength << std::endl;
+	//std::cout << "delta is: " << delta << std::endl;
+
+	currentDirectory[delta] = '\0';
+
+	std::cout << "Moving to parent directory: " << currentDirectory << std::endl;
 
 	currentDirectory[delta] = '\\';
 	currentDirectory[delta + 1] = '\0';
 	std::cout << "Parent is: " << currentDirectory << std::endl;
 	_chdir(currentDirectory);
-	//_chdir("C:\\");
 }
 
 
