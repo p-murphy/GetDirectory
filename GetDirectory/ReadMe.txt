@@ -2,10 +2,7 @@
     CONSOLE APPLICATION : GetDirectory Project Overview
 ========================================================================
 
-AppWizard has created this GetDirectory application for you.
-
-This file contains a summary of what you will find in each of the files that
-make up your GetDirectory application.
+This project is the basis for the implementation of a custom File Explorer project.
 
 
 GetDirectory.vcxproj
