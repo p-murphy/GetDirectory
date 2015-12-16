@@ -30,11 +30,12 @@ void PrintCurrentDirectory();
 void PrintDirectory(Directory *dir);
 
 // Prompt user to take a directory action
-void MenuSelection();
+void MenuSelection(Directory *dir);
 
-// Accept user choide for directory action
+// Accept user choice for directory action
 int GetUserChoice();
 
+void MoveToParentDirectory();
 
 int SetCurrentDirectory(char dir[]);
 void GetParentDirectory(char parent[], char child[]);
@@ -55,6 +56,12 @@ int _tmain(int argc, _TCHAR* argv[])
 	PrintCurrentDirectory();
 
 	std::cout << "/////////////////////" << std::endl;
+
+	MoveToParentDirectory();
+
+	std::cout << "/////////////////////" << std::endl;
+
+	MenuSelection(workingDirectory);
 
 	/*GetParentDirectory(newPath, directoryBuffer);
 	std::cout << "GetParentDirectory: " << newPath << std::endl;
@@ -133,6 +140,43 @@ void PrintDirectory(Directory *dir)
 	std::cout << _getcwd(dir->directory, dir->size) << std::endl;
 }
 
+void MoveToParentDirectory()
+{
+	char directoryBuffer[FILENAME_MAX];
+	char* currentDirectory = _getcwd(directoryBuffer, sizeof(directoryBuffer));
+	int currentDirectoryLength = strlen(currentDirectory);
+
+	std::cout << "Last char in currentDirectory is: " << currentDirectory[currentDirectoryLength - 1] << std::endl;
+
+	if (currentDirectory[currentDirectoryLength - 1] == '\\')
+	{
+		currentDirectory[currentDirectoryLength - 1] = '\0';
+	}
+
+	char *finalBackslash;
+	finalBackslash = strrchr(currentDirectory, '\\');
+
+	if (finalBackslash == nullptr)
+	{
+		std::cout << "We are at the root directory. Returning..."<< std::endl;
+		return;
+	}
+
+	//std::cout << "finalBackslash is: "<< finalBackslash << std::endl;
+	int currentDirectoryNameLength = strlen(finalBackslash);
+
+	int delta = currentDirectoryLength - currentDirectoryNameLength;
+
+	std::cout << "currentDirectoryNameLength is: " << currentDirectoryNameLength << std::endl;
+	std::cout << "currentDirectoryLength is: " << currentDirectoryLength << std::endl;
+	std::cout << "delta is: " << delta << std::endl;
+
+	currentDirectory[delta] = '\\';
+	currentDirectory[delta + 1] = '\0';
+	std::cout << "Parent is: " << currentDirectory << std::endl;
+	_chdir(currentDirectory);
+	//_chdir("C:\\");
+}
 
 
 void GetParentDirectory(char parent[], char child[])
@@ -150,6 +194,24 @@ void GetParentDirectory(char parent[], char child[])
 	std::cout << "Index is: " << index << std::endl;
 	strncpy(parent, child, index);
 	parent[index] = '\0';
+}
+
+void GetParentDirectory(Directory *dir)
+{
+	char directoryBuffer[FILENAME_MAX];
+	char *finalBackslash;
+	finalBackslash = strrchr(_getcwd(directoryBuffer, sizeof(directoryBuffer)), '\\');
+	if (finalBackslash == nullptr)
+	{
+		//We are at the root directory.
+		//Return root, to align with cd behavior.
+		std::cout << "We are at root." << std::endl;
+		return;
+	}
+	/*int index = finalBackslash - child;
+	std::cout << "Index is: " << index << std::endl;
+	strncpy(parent, child, index);
+	parent[index] = '\0';*/
 }
 
 int SetCurrentDirectory(char dir[])
@@ -173,43 +235,50 @@ int PrintParentDirectory(char dirParent[], char dirChild[])
 	return 0;
 }
 
-void MenuSelection()
+void MenuSelection(Directory *dir)
 {
+
+	bool loopControl = true;
 	int userChoice;
 
-	std::cout << "Please choose one of the following:" << std::endl;
-	std::cout << "1 - Print Current Directory Path" << std::endl;
-	std::cout << "2 - Print Current Directory Contents" << std::endl;
-	std::cout << "3 - Print Parent Directory Path" << std::endl;
-	std::cout << "4 - Print Parent Directory Contents" << std::endl;
-	std::cout << "5 - Change to Parent Directory" << std::endl;
-	std::cout << "6 - End Program" << std::endl;
-
-	userChoice = GetUserChoice();
-
-	switch (userChoice)
+	while (loopControl)
 	{
-	case 0:
-		std::cout << "User has selected: " << userChoice << std::endl;
-		break;
-	case 1:
-		std::cout << "User has selected: " << userChoice << std::endl;
-		break;
-	case 2:
-		std::cout << "User has selected: " << userChoice << std::endl;
-		break;
-	case 3:
-		std::cout << "User has selected: " << userChoice << std::endl;
-		break;
-	case 4:
-		std::cout << "User has selected: " << userChoice << std::endl;
-		break;
-	case 5:
-		std::cout << "User has selected: " << userChoice << std::endl;
-		break;
-	case 6:
-		std::cout << "User has selected: " << userChoice << std::endl;
-		break;
+		std::cout << std::endl;
+		std::cout << "Please choose one of the following:" << std::endl;
+		std::cout << "1 - Print Current Directory Path" << std::endl;
+		std::cout << "2 - Print Stored Directory Path" << std::endl;
+		std::cout << "3 - Move to Parent Directory" << std::endl;
+		std::cout << "4 - End Program" << std::endl;
+
+		userChoice = GetUserChoice();
+
+		switch (userChoice)
+		{
+		case 1:
+			std::cout << "User has selected: " << userChoice << std::endl;
+			PrintCurrentDirectory();
+			break;
+		case 2:
+			std::cout << "User has selected: " << userChoice << std::endl;
+			PrintDirectory(dir);
+			break;
+		case 3:
+			std::cout << "User has selected: " << userChoice << std::endl;
+			MoveToParentDirectory();
+			break;
+		case 4:
+			std::cout << "User has selected: " << userChoice << std::endl;
+			loopControl = false;
+			break;
+		case 5:
+			std::cout << "User has selected: " << userChoice << std::endl;
+			break;
+		case 6:
+			std::cout << "User has selected: " << userChoice << std::endl;
+			break;
+		default:
+			break;
+		}
 	}
 }
 
