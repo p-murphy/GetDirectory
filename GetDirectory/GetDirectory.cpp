@@ -53,20 +53,13 @@ int _tmain(int argc, _TCHAR* argv[])
 	Directory *workingDirectory = new Directory();
 	Directory *workingDirectory2 = new Directory();
 
-<<<<<<< HEAD
-=======
-	//GetCurrentDirectory(workingDirectory);
-	//PrintDirectoryObject(workingDirectory);
-	//PrintCurrentDirectory();
-
->>>>>>> 0051405ddfbd7a2adbf98f5bc29f2f7e8a87cf7f
 	std::cout << "/////////////////////" << std::endl;
 	std::cout << "/////////////////////" << std::endl;
 
 	MenuSelection(workingDirectory);
 
 	std::cin.ignore(32767, '\n');
-    std::cin.get();
+	std::cin.get();
 
 	return 0;
 }
@@ -127,11 +120,7 @@ void MoveToParentDirectory()
 	int currentDirectoryNameLength = strlen(finalBackslash);
 	int delta = currentDirectoryLength - currentDirectoryNameLength;
 
-<<<<<<< HEAD
 	// Null terminate string, print to screen
-=======
-	// Print to screen
->>>>>>> 0051405ddfbd7a2adbf98f5bc29f2f7e8a87cf7f
 	currentDirectory[delta] = '\0';
 	std::cout << "Moving to parent directory: " << currentDirectory << std::endl;
 
@@ -139,11 +128,6 @@ void MoveToParentDirectory()
 	currentDirectory[delta] = '\\';
 	currentDirectory[delta + 1] = '\0';
 
-<<<<<<< HEAD
-=======
-	std::cout << "Moving to this parent directory: " << currentDirectory << std::endl;
-
->>>>>>> 0051405ddfbd7a2adbf98f5bc29f2f7e8a87cf7f
 	// Change to new directory
 	_chdir(currentDirectory);
 }
@@ -152,29 +136,15 @@ void MoveToParentDirectory()
 void GetParentDirectory(Directory *dir)
 {
 	char directoryBuffer[FILENAME_MAX];
-<<<<<<< HEAD
 	char *currentDirectory = _getcwd(directoryBuffer, sizeof(directoryBuffer));
 	int currentDirectoryLength = strlen(currentDirectory);
 
-=======
-	char tempDirectoryBuffer[FILENAME_MAX];
-	char *currentDirectory = _getcwd(directoryBuffer, sizeof(directoryBuffer));
-	int currentDirectoryLength = strlen(currentDirectory);
-
-	std::cout << "GPD#1: " << currentDirectory << std::endl;
-
->>>>>>> 0051405ddfbd7a2adbf98f5bc29f2f7e8a87cf7f
 	// Remove possible trailing backslash on path string
 	if (currentDirectory[currentDirectoryLength - 1] == '\\')
 	{
 		currentDirectory[currentDirectoryLength - 1] = '\0';
 	}
 
-<<<<<<< HEAD
-=======
-	std::cout << "GPD#2: " << currentDirectory << std::endl;
-
->>>>>>> 0051405ddfbd7a2adbf98f5bc29f2f7e8a87cf7f
 	// Identify directory leaf
 	char *finalBackslash;
 	finalBackslash = strrchr(currentDirectory, '\\');
@@ -190,11 +160,6 @@ void GetParentDirectory(Directory *dir)
 		return;
 	}
 
-<<<<<<< HEAD
-=======
-	std::cout << "GPD#3: " << currentDirectory << std::endl;
-
->>>>>>> 0051405ddfbd7a2adbf98f5bc29f2f7e8a87cf7f
 	// Locate index of path string to be truncated
 	int currentDirectoryNameLength = strlen(finalBackslash);
 	int delta = currentDirectoryLength - currentDirectoryNameLength;
@@ -204,7 +169,6 @@ void GetParentDirectory(Directory *dir)
 	currentDirectory[delta] = '\\';
 	currentDirectory[delta + 1] = '\0';
 
-<<<<<<< HEAD
 	// Store current location to move back to after changing context to parent directory
 	char tempDirectoryBuffer[FILENAME_MAX];
 	char *tempDirectory = _getcwd(tempDirectoryBuffer, sizeof(tempDirectoryBuffer));
@@ -212,19 +176,6 @@ void GetParentDirectory(Directory *dir)
 	// Change to parent directory context
 	_chdir(currentDirectory);
 
-=======
-	std::cout << "GPD#4: " << currentDirectory << std::endl;
-
-	// Store current location to move back to after changing context to parent directory
-	char *tempDirectory = _getcwd(tempDirectoryBuffer, sizeof(tempDirectoryBuffer));
-
-	std::cout << "GPD#5: " << currentDirectory << std::endl;
-
-	// Change to parent directory context
-	_chdir(currentDirectory);
-
-	std::cout << "GPD#6: " << currentDirectory << std::endl;
->>>>>>> 0051405ddfbd7a2adbf98f5bc29f2f7e8a87cf7f
 	std::cout << "Loading this directory into parent object: " << currentDirectory << std::endl;
 
 	// Store parent context into Directory object
@@ -236,13 +187,13 @@ void GetParentDirectory(Directory *dir)
 
 int SetCurrentDirectory(char dir[])
 {
-	if(dir == nullptr)
+	if (dir == nullptr)
 		return -1;
 
 	if (_chdir(dir))
-    {
+	{
 		return errno;
-    }
+	}
 
 	return 0;
 }
