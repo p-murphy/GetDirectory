@@ -21,26 +21,42 @@ public:
 
 //// FUNCTIONS ////
 
-// Load current directory information into Directory object dir
-void GetCurrentDirectory(Directory *dir);
+/* 
+  Directory functions are designated by being 1 of 2 types. Type 1 perform
+  actions without needing a reference to an existing Directory objects. These
+  actions are generally concerned with current user directory context, such as printing
+  and changing context.
+
+  Type 2 require a reference to an existing Directory object. These actions
+  will generally act on storing or retrieving a directory context.
+
+*/
 
 // Print current directory path to cout
 void PrintCurrentDirectory();
 
-// Print path information in Directory object dir
-void PrintDirectoryObject(Directory *dir);
-
-// Prompt user to take a directory action
-void MenuSelection(Directory *dir);
-
-// Accept user choice for directory action
-int GetUserChoice();
+// Print path of current containing directory to cout
+void PrintParentDirectory();
 
 // Change context to containing directory
 void MoveToParentDirectory();
 
-int SetCurrentDirectory(char dir[]);
+// Load current directory information into Directory object dir
+void GetCurrentDirectory(Directory *dir);
+
+// Print path information in Directory object dir
+void PrintDirectoryObject(const Directory *dir);
+
+// Load parent directory information into Directory object
+// Load special Null Directory if we are at the root
 void GetParentDirectory(Directory *dir);
+
+// Prompt user to take a directory action
+void MenuSelection(Directory *dir);
+
+
+int SetCurrentDirectory(char dir[]);
+
 int PrintParentDirectory(char dirParent[], char dirChild[]);
 
 
@@ -58,8 +74,8 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	MenuSelection(workingDirectory);
 
-	std::cin.ignore(32767, '\n');
-	std::cin.get();
+	/*std::cin.ignore(32767, '\n');
+	std::cin.get();*/
 
 	return 0;
 }
@@ -76,7 +92,44 @@ void PrintCurrentDirectory()
 	std::cout << _getcwd(directoryBuffer, sizeof(directoryBuffer)) << std::endl;
 }
 
-void PrintDirectoryObject(Directory *dir)
+void PrintParentDirectory()
+{
+	char directoryBuffer[FILENAME_MAX];
+	char *currentDirectory = _getcwd(directoryBuffer, sizeof(directoryBuffer));
+	int currentDirectoryLength = strlen(currentDirectory);
+
+	// Remove possible trailing backslash on path string
+	if (currentDirectory[currentDirectoryLength - 1] == '\\')
+	{
+		currentDirectory[currentDirectoryLength - 1] = '\0';
+	}
+
+	// Isolate directory leaf at end of path
+	char *finalBackslash;
+	finalBackslash = strrchr(currentDirectory, '\\');
+
+	if (finalBackslash == nullptr)
+	{
+		// We are at the root of the directory.
+		// Return root to align with cd behavior.
+		//std::cout << "currentDirectoryLength is " << currentDirectoryLength << std::endl;
+		currentDirectory[currentDirectoryLength - 1] = '\\';
+		currentDirectory[currentDirectoryLength] = '\0';
+		std::cout << currentDirectory << std::endl; 
+		return;
+	}
+
+	// Locate index of path string to be truncated
+	int currentDirectoryNameLength = strlen(finalBackslash);
+	int delta = currentDirectoryLength - currentDirectoryNameLength;
+
+	// Append trailing backslash to handle root directory case
+	currentDirectory[delta] = '\0';
+
+	std::cout << currentDirectory << std::endl;
+}
+
+void PrintDirectoryObject(const Directory *dir)
 {
 	if (dir->dir == nullptr)
 	{
@@ -105,7 +158,7 @@ void MoveToParentDirectory()
 		currentDirectory[currentDirectoryLength - 1] = '\0';
 	}
 
-	// Identify directory leaf
+	// Isolate directory leaf at end of path
 	char *finalBackslash;
 	finalBackslash = strrchr(currentDirectory, '\\');
 
@@ -113,6 +166,7 @@ void MoveToParentDirectory()
 	{
 		// We are at the root of the directory.
 		_chdir(currentDirectory);
+		PrintCurrentDirectory();
 		return;
 	}
 
@@ -120,16 +174,13 @@ void MoveToParentDirectory()
 	int currentDirectoryNameLength = strlen(finalBackslash);
 	int delta = currentDirectoryLength - currentDirectoryNameLength;
 
-	// Null terminate string, print to screen
-	currentDirectory[delta] = '\0';
-	std::cout << "Moving to parent directory: " << currentDirectory << std::endl;
-
 	// Append trailing backslash to handle root directory case
 	currentDirectory[delta] = '\\';
 	currentDirectory[delta + 1] = '\0';
 
 	// Change to new directory
 	_chdir(currentDirectory);
+	PrintCurrentDirectory();
 }
 
 
@@ -165,7 +216,6 @@ void GetParentDirectory(Directory *dir)
 	int delta = currentDirectoryLength - currentDirectoryNameLength;
 
 	// Append trailing backslash to handle root directory case
-	currentDirectory[delta] = '\0';
 	currentDirectory[delta] = '\\';
 	currentDirectory[delta + 1] = '\0';
 
@@ -198,13 +248,7 @@ int SetCurrentDirectory(char dir[])
 	return 0;
 }
 
-int PrintParentDirectory(char dirParent[], char dirChild[])
-{
-	void GetParentDirectory(char dirParent[], char dirChild[]);
-	std::cout << dirParent << std::endl;
 
-	return 0;
-}
 
 void MenuSelection(Directory *dir)
 {
@@ -221,9 +265,10 @@ void MenuSelection(Directory *dir)
 		std::cout << "3 - Move to Parent Directory" << std::endl;
 		std::cout << "4 - Load Current Directory Path into Directory Object" << std::endl;
 		std::cout << "5 - Load Parent Directory Path into Directory Object" << std::endl;
-		std::cout << "6 - End Program" << std::endl;
+		std::cout << "6 - Print Parent Directory Path" << std::endl;
+		std::cout << "7 - End Program" << std::endl;
 
-		userChoice = GetUserChoice();
+		std::cin >> userChoice;
 
 		switch (userChoice)
 		{
@@ -249,17 +294,14 @@ void MenuSelection(Directory *dir)
 			break;
 		case 6:
 			std::cout << "User has selected: " << userChoice << std::endl;
+			PrintParentDirectory();
+			break;
+		case 7:
+			//std::cout << "User has selected: " << userChoice << std::endl;
 			loopControl = false;
 			break;
 		default:
 			break;
 		}
 	}
-}
-
-int GetUserChoice()
-{
-	int userChoice;
-	std::cin >> userChoice;
-	return userChoice;
 }
