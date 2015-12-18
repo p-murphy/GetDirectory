@@ -6,7 +6,8 @@
 #include <iostream>
 #include <string>
 #include <string.h>
-
+#include <stdio.h>
+#include <stdlib.h>
 
 //// CLASSES ////
 
@@ -54,11 +55,11 @@ void GetParentDirectory(Directory *dir);
 // Prompt user to take a directory action
 void MenuSelection(Directory *dir);
 
+void ReadDirectory();
+
+void PrintDirectoryDirectories();
 
 int SetCurrentDirectory(char dir[]);
-
-int PrintParentDirectory(char dirParent[], char dirChild[]);
-
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -68,6 +69,8 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	Directory *workingDirectory = new Directory();
 	Directory *workingDirectory2 = new Directory();
+
+	system("dir /ad-l");
 
 	std::cout << "/////////////////////" << std::endl;
 	std::cout << "/////////////////////" << std::endl;
@@ -79,7 +82,6 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	return 0;
 }
-
 
 void GetCurrentDirectory(Directory *dir)
 {
@@ -165,7 +167,10 @@ void MoveToParentDirectory()
 	if (finalBackslash == nullptr)
 	{
 		// We are at the root of the directory.
+		// Move to root to align with cd behavior.
 		_chdir(currentDirectory);
+
+		// Print to cout
 		PrintCurrentDirectory();
 		return;
 	}
@@ -180,9 +185,10 @@ void MoveToParentDirectory()
 
 	// Change to new directory
 	_chdir(currentDirectory);
+
+	// Print to cout
 	PrintCurrentDirectory();
 }
-
 
 void GetParentDirectory(Directory *dir)
 {
@@ -235,21 +241,6 @@ void GetParentDirectory(Directory *dir)
 	_chdir(tempDirectory);
 }
 
-int SetCurrentDirectory(char dir[])
-{
-	if (dir == nullptr)
-		return -1;
-
-	if (_chdir(dir))
-	{
-		return errno;
-	}
-
-	return 0;
-}
-
-
-
 void MenuSelection(Directory *dir)
 {
 
@@ -266,7 +257,8 @@ void MenuSelection(Directory *dir)
 		std::cout << "4 - Load Current Directory Path into Directory Object" << std::endl;
 		std::cout << "5 - Load Parent Directory Path into Directory Object" << std::endl;
 		std::cout << "6 - Print Parent Directory Path" << std::endl;
-		std::cout << "7 - End Program" << std::endl;
+		std::cout << "7 - PrintDirectoryContents" << std::endl;
+		std::cout << "8 - End Program" << std::endl;
 
 		std::cin >> userChoice;
 
@@ -297,6 +289,10 @@ void MenuSelection(Directory *dir)
 			PrintParentDirectory();
 			break;
 		case 7:
+			std::cout << "User has selected: " << userChoice << std::endl;
+			PrintDirectoryDirectories();
+			break;
+		case 8:
 			//std::cout << "User has selected: " << userChoice << std::endl;
 			loopControl = false;
 			break;
@@ -304,4 +300,28 @@ void MenuSelection(Directory *dir)
 			break;
 		}
 	}
+}
+
+void ReadDirectory()
+{
+
+}
+
+void PrintDirectoryDirectories()
+{
+	system("dir /ad-l");
+}
+
+
+int SetCurrentDirectory(char dir[])
+{
+	if (dir == nullptr)
+		return -1;
+
+	if (_chdir(dir))
+	{
+		return errno;
+	}
+
+	return 0;
 }
