@@ -336,7 +336,7 @@ void MoveToDirectory()
 
 	while (directoryIterator != dirVect.end())
 	{
-		std::cout << "comparing _" << directoryInput << "_ and _" << *directoryIterator << "_" << std::endl;
+		//std::cout << "comparing _" << directoryInput << "_ and _" << *directoryIterator << "_" << std::endl;
 
 		if (directoryInput.compare(*directoryIterator) == 0)
 			exists = true;
@@ -347,6 +347,8 @@ void MoveToDirectory()
 	if (exists)
 	{
 		std::cout << "We found a match" << std::endl;
+		const char *dir = directoryInput.c_str();
+		_chdir(dir);
 	}
 	else
 	{
