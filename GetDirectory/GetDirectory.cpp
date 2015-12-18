@@ -8,6 +8,8 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <vector>
+#include <iostream>
 
 //// CLASSES ////
 
@@ -55,9 +57,15 @@ void GetParentDirectory(Directory *dir);
 // Prompt user to take a directory action
 void MenuSelection(Directory *dir);
 
+void MoveToDirectory();
+
 void ReadDirectory();
 
 void PrintDirectoryDirectories();
+
+void WriteDirectoryInformation();
+
+std::vector<std::string> GatherDirectoryInformation();
 
 int SetCurrentDirectory(char dir[]);
 
@@ -257,8 +265,9 @@ void MenuSelection(Directory *dir)
 		std::cout << "4 - Load Current Directory Path into Directory Object" << std::endl;
 		std::cout << "5 - Load Parent Directory Path into Directory Object" << std::endl;
 		std::cout << "6 - Print Parent Directory Path" << std::endl;
-		std::cout << "7 - PrintDirectoryContents" << std::endl;
-		std::cout << "8 - End Program" << std::endl;
+		std::cout << "7 - Print Current Sub Directories" << std::endl;
+		std::cout << "8 - Move To Directory" << std::endl;
+		std::cout << "9 - End Program" << std::endl;
 
 		std::cin >> userChoice;
 
@@ -290,9 +299,13 @@ void MenuSelection(Directory *dir)
 			break;
 		case 7:
 			std::cout << "User has selected: " << userChoice << std::endl;
-			PrintDirectoryDirectories();
+			WriteDirectoryInformation();
 			break;
 		case 8:
+			std::cout << "User has selected: " << userChoice << std::endl;
+			MoveToDirectory();
+			break;
+		case 9:
 			//std::cout << "User has selected: " << userChoice << std::endl;
 			loopControl = false;
 			break;
@@ -302,6 +315,28 @@ void MenuSelection(Directory *dir)
 	}
 }
 
+void MoveToDirectory()
+{
+	char dir[FILENAME_MAX];
+
+	std::cout << "Please enter the directory you would like to move to:" << std::endl;
+
+	// Flush buffer
+	std::cin.clear();
+	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+	// Gather user input
+	std::cin.getline(dir, FILENAME_MAX);
+
+
+	int length = strlen(dir);
+
+	std::cout << "You entered: " << dir << std::endl;
+	std::cout << "Length is: " << length << std::endl;
+
+}
+
+
 void ReadDirectory()
 {
 
@@ -310,6 +345,53 @@ void ReadDirectory()
 void PrintDirectoryDirectories()
 {
 	system("dir /ad-l");
+}
+
+std::vector<std::string> GatherDirectoryInformation()
+{
+	char buf[FILENAME_MAX];
+	FILE *pPipe;
+	std::vector<std::string> dirVect;
+
+	// The command "dir /ad-l /b" returns only raw directory names, and nothing else at all.
+	// See dir help in cmd for more information.
+	if ((pPipe = _popen("dir /ad-l /b", "rt")) == NULL)
+		exit(1);
+
+	// Fill string vector with directory names
+	while (fgets(buf, FILENAME_MAX, pPipe))
+	{
+		dirVect.push_back(buf);
+	}
+
+	/* Close pipe and print return value of pPipe. */
+	if (feof(pPipe))
+	{
+		//std::cout << "All good." << std::endl;
+	}
+	else
+	{
+		std::cout << "Error: Failed to read the pipe to the end." << std::endl;
+	}
+
+	return dirVect;
+}
+
+void WriteDirectoryInformation()
+{
+
+	std::vector<std::string> dirVect = GatherDirectoryInformation();
+
+	std::cout << "There are " << dirVect.size() << " directories:" << std::endl;
+
+	std::vector<std::string>::const_iterator directoryIterator;
+	directoryIterator = dirVect.begin();
+
+	while (directoryIterator != dirVect.end())
+	{
+		std::cout << *directoryIterator;
+		++directoryIterator;
+	}
 }
 
 
