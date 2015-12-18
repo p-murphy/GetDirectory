@@ -317,7 +317,8 @@ void MenuSelection(Directory *dir)
 
 void MoveToDirectory()
 {
-	char dir[FILENAME_MAX];
+	std::string directoryInput;
+	bool exists = false;
 
 	std::cout << "Please enter the directory you would like to move to:" << std::endl;
 
@@ -326,13 +327,34 @@ void MoveToDirectory()
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
 	// Gather user input
-	std::cin.getline(dir, FILENAME_MAX);
+	std::getline(std::cin, directoryInput);
 
+	std::vector<std::string> dirVect = GatherDirectoryInformation();
 
-	int length = strlen(dir);
+	std::vector<std::string>::const_iterator directoryIterator;
+	directoryIterator = dirVect.begin();
 
-	std::cout << "You entered: " << dir << std::endl;
-	std::cout << "Length is: " << length << std::endl;
+	while (directoryIterator != dirVect.end())
+	{
+		std::cout << "comparing _" << directoryInput << "_ and _" << *directoryIterator << "_" << std::endl;
+
+		if (directoryInput.compare(*directoryIterator) == 0)
+			exists = true;
+
+		++directoryIterator;
+	}
+
+	if (exists)
+	{
+		std::cout << "We found a match" << std::endl;
+	}
+	else
+	{
+		std::cout << "We did not find a match" << std::endl;
+	}
+
+	//std::cout << "You entered: " << 8 << std::endl;
+	//std::cout << "Length is: " << 8 << std::endl;
 
 }
 
@@ -352,6 +374,7 @@ std::vector<std::string> GatherDirectoryInformation()
 	char buf[FILENAME_MAX];
 	FILE *pPipe;
 	std::vector<std::string> dirVect;
+	int length;
 
 	// The command "dir /ad-l /b" returns only raw directory names, and nothing else at all.
 	// See dir help in cmd for more information.
@@ -361,6 +384,8 @@ std::vector<std::string> GatherDirectoryInformation()
 	// Fill string vector with directory names
 	while (fgets(buf, FILENAME_MAX, pPipe))
 	{
+		length = strlen(buf);
+		buf[length - 1] = '\0';
 		dirVect.push_back(buf);
 	}
 
@@ -379,7 +404,6 @@ std::vector<std::string> GatherDirectoryInformation()
 
 void WriteDirectoryInformation()
 {
-
 	std::vector<std::string> dirVect = GatherDirectoryInformation();
 
 	std::cout << "There are " << dirVect.size() << " directories:" << std::endl;
@@ -389,7 +413,7 @@ void WriteDirectoryInformation()
 
 	while (directoryIterator != dirVect.end())
 	{
-		std::cout << *directoryIterator;
+		std::cout << *directoryIterator << std::endl;
 		++directoryIterator;
 	}
 }
