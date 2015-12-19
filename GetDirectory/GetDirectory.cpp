@@ -399,7 +399,7 @@ void ParseAbsoluteDirectoryPath()
 	*/
 
 	std::string path;
-	std::vector<std::string> parsed;
+
 
 	std::cout << "Please enter a full directory path to parse:" << std::endl;
 
@@ -416,32 +416,60 @@ void ParseAbsoluteDirectoryPath()
 		path = path.substr(0, path.length() - 1);
 	}
 
+	// If user entered only a drive
 	int found = path.find_first_of(":\\");
 	if (found == std::string::npos)
 	{
-		std::cout << "We are dealing with just a drive name: " << path << std::endl;
+		std::cout << path << ":\\" << std::endl;
 		return;
 	}
 
-	// If user entered only a drive
+	// If user entered only a drive and :
 	if (path[path.length() - 1] == ':')
 	{
-		std::cout << "This is a drive:" << path << std::endl;
+		std::cout << path << "\\" << std::endl;
 		return;
 	}
 
+	std::vector<std::string> parsed;
+
+	// Leading drive edge case
 	int index = path.find_first_of("\\");
 	parsed.push_back(path.substr(0, index + 1));
-	//path = ;
-	std::cout << "Remaining path is " << path.substr(index , path.length() - index + 1) << std::endl;
+	std::string temp = path.substr(index + 1, path.length() - index + 1);
+	path = temp;
+	index = path.find_first_of("\\");
 
-	//int index = path.find_first_of("\\");
-	//
-	//while (index != std::string::npos)
-	//{
-	//	parsed.push_back(path.substr(0, index));
-	//	path = 
-	//}
+	// For remaining directories, which we know that there is at least one of.
+	// This loop however only works on 2 or more. See next if statement for 
+	// cases with only one directory.
+	while (index != std::string::npos)
+	{
+		parsed.push_back(path.substr(0, index));
+		std::string temp = path.substr(index + 1, path.length() - index + 1);
+		path = temp;
+		std::cout << "Remaining path is " << path << std::endl;
+		index = path.find_first_of("\\");
+	}
+
+	// Push final directory onto string vector in cases of two or more, or,
+	// in cases where there is only one directory, push that directory.
+	if (index == std::string::npos)
+	{
+		parsed.push_back(path.substr(0, index));
+	}
+
+	//std::cout << "parsed's size is: " << parsed.size() << std::endl;
+
+	std::vector<std::string>::iterator parsedIterator;
+	parsedIterator = parsed.begin();
+
+	// Print parsed directory path to screen
+	while (parsedIterator != parsed.end())
+	{
+		std::cout << *parsedIterator << std::endl;
+		++parsedIterator;
+	}
 }
 
 void ReadDirectory()
