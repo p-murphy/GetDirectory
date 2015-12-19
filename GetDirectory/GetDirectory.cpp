@@ -65,6 +65,8 @@ void PrintDirectoryDirectories();
 
 void WriteDirectoryInformation();
 
+void ParseAbsoluteDirectoryPath();
+
 std::vector<std::string> GatherDirectoryInformation();
 
 int SetCurrentDirectory(char dir[]);
@@ -267,7 +269,8 @@ void MenuSelection(Directory *dir)
 		std::cout << "6 - Print Parent Directory Path" << std::endl;
 		std::cout << "7 - Print Current Sub Directories" << std::endl;
 		std::cout << "8 - Move To Directory" << std::endl;
-		std::cout << "9 - End Program" << std::endl;
+		std::cout << "9 - Parse Absolute Directory Path" << std::endl;
+		std::cout << "10 - End Program" << std::endl;
 
 		std::cin >> userChoice;
 
@@ -306,6 +309,10 @@ void MenuSelection(Directory *dir)
 			MoveToDirectory();
 			break;
 		case 9:
+			std::cout << "User has selected: " << userChoice << std::endl;
+			ParseAbsoluteDirectoryPath();
+			break;
+		case 10:
 			//std::cout << "User has selected: " << userChoice << std::endl;
 			loopControl = false;
 			break;
@@ -329,6 +336,12 @@ void MoveToDirectory()
 	// Gather user input
 	std::getline(std::cin, directoryInput);
 
+	// Remove possible trailing backslash on path string
+	if (directoryInput[directoryInput.length() - 1] == '\\')
+	{
+		directoryInput[directoryInput.length() - 1] = '\0';
+	}
+
 	std::vector<std::string> dirVect = GatherDirectoryInformation();
 
 	std::vector<std::string>::const_iterator directoryIterator;
@@ -351,6 +364,7 @@ void MoveToDirectory()
 		const char *dir = directoryInput.c_str();
 		_chdir(dir);
 		PrintCurrentDirectory();
+		return;
 	}
 	else
 	{
@@ -362,6 +376,43 @@ void MoveToDirectory()
 	PrintCurrentDirectory();
 }
 
+void ParseAbsoluteDirectoryPath()
+{
+	std::string path;
+	std::vector<std::string> parsed;
+
+	//// Flush buffer
+	//std::cin.clear();
+	//std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+	std::cout << "Please enter a full directory path to parse:" << std::endl;
+
+	// Flush buffer
+	std::cin.clear();
+	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+	// Gather user input
+	std::getline(std::cin, path);
+
+	// Remove possible trailing backslash on path string
+	if (path[path.length() - 1] == '\\')
+	{
+		path[path.length() - 1] = '\0';
+	}
+
+	int index = path.find_first_of("\\");
+	parsed.push_back(path.substr(0, index + 1));
+	//path = ;
+	std::cout << "Remaining path is " << path.substr(index , path.length() - index + 1) << std::endl;
+
+	//int index = path.find_first_of("\\");
+	//
+	//while (index != std::string::npos)
+	//{
+	//	parsed.push_back(path.substr(0, index));
+	//	path = 
+	//}
+}
 
 void ReadDirectory()
 {
