@@ -381,10 +381,6 @@ void ParseAbsoluteDirectoryPath()
 	std::string path;
 	std::vector<std::string> parsed;
 
-	//// Flush buffer
-	//std::cin.clear();
-	//std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
 	std::cout << "Please enter a full directory path to parse:" << std::endl;
 
 	// Flush buffer
@@ -397,7 +393,28 @@ void ParseAbsoluteDirectoryPath()
 	// Remove possible trailing backslash on path string
 	if (path[path.length() - 1] == '\\')
 	{
-		path[path.length() - 1] = '\0';
+		path = path.substr(0, path.length() - 1);
+	}
+
+	/*
+	
+	Problems:
+	Current logic does not handle a path without backslashes, ex: C:
+	Need to handle:
+	C
+	C:
+	C:\
+	C:\a
+	C:\a\
+	*/
+
+
+
+	// If user entered only a drive
+	if (path[path.length() - 1] == ':')
+	{
+		std::cout << "This is a drive:" << path << std::endl;
+		return;
 	}
 
 	int index = path.find_first_of("\\");
