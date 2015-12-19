@@ -378,6 +378,26 @@ void MoveToDirectory()
 
 void ParseAbsoluteDirectoryPath()
 {
+	/*
+
+	Problems:
+	Current logic does not handle incorrectly formatted paths.
+	For now, we will assume paths are entered in the form:
+	<drive>:\<directory>\<directory>\...
+
+	Where ... is a chain of directories of arbitrary length.
+	All directories are optional, but the drive is not.
+
+	The drive can be input in any of the following formats when it is alone:
+	<drive>
+	<drive>:
+	<drive>:\
+
+	But when it is followed by any directory chain, it must be of the format:
+	<drive>:\
+
+	*/
+
 	std::string path;
 	std::vector<std::string> parsed;
 
@@ -396,19 +416,12 @@ void ParseAbsoluteDirectoryPath()
 		path = path.substr(0, path.length() - 1);
 	}
 
-	/*
-	
-	Problems:
-	Current logic does not handle a path without backslashes, ex: C:
-	Need to handle:
-	C
-	C:
-	C:\
-	C:\a
-	C:\a\
-	*/
-
-
+	int found = path.find_first_of(":\\");
+	if (found == std::string::npos)
+	{
+		std::cout << "We are dealing with just a drive name: " << path << std::endl;
+		return;
+	}
 
 	// If user entered only a drive
 	if (path[path.length() - 1] == ':')
