@@ -69,7 +69,7 @@ void ParseAbsoluteDirectoryPath();
 
 std::vector<std::string> GatherDirectoryInformation();
 
-int SetCurrentDirectory(char dir[]);
+void SetCurrentDirectory(char dir[]);
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -532,15 +532,7 @@ void WriteDirectoryInformation()
 }
 
 
-int SetCurrentDirectory(char dir[])
+void SetCurrentDirectory(char dir[])
 {
-	if (dir == nullptr)
-		return -1;
-
-	if (_chdir(dir))
-	{
-		return errno;
-	}
-
-	return 0;
+	std::cout << "Moving to directory: "<< dir << std::endl;
 }
