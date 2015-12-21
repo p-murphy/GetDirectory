@@ -542,5 +542,12 @@ void WriteDirectoryInformation()
 
 void SetCurrentDirectory(char dir[])
 {
+	/*
+
+	SetCurrentDirectory will first need a support function which uses ParseAbsoluteDirectoryPath,
+	and one other function which can handle relative paths, and use these as input. Once the path
+	requested is verified as existing, we should move the that directory.
+
+	*/
 	std::cout << "Moving to directory: "<< dir << std::endl;
 }
