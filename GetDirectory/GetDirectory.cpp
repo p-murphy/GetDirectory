@@ -57,19 +57,27 @@ void GetParentDirectory(Directory *dir);
 // Prompt user to take a directory action
 void MenuSelection(Directory *dir);
 
+// Change directory context to arbitrary location
 void MoveToDirectory();
 
+// Not implimented yet
 void ReadDirectory();
 
+// Prints only the subdirectories in the current directory
 void PrintDirectoryDirectories();
 
+// Like PrintDirectoryDirectories, but writes only raw Directory names, and nothing else at all
 void WriteDirectoryInformation();
 
+// Takes an arbitrary string of path information and parses and prints each to screen as a separate line
+// *To be changed later*
 void ParseAbsoluteDirectoryPath();
 
-std::vector<std::string> GatherDirectoryInformation();
-
+// Not impimented yet
 void SetCurrentDirectory(char dir[]);
+
+// Support function for functions which need raw directory names
+std::vector<std::string> GatherDirectoryInformation();
 
 int _tmain(int argc, _TCHAR* argv[])
 {
