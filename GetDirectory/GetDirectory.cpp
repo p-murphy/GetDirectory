@@ -71,7 +71,7 @@ void WriteDirectoryInformation();
 
 // Takes an arbitrary string of path information and parses and prints each to screen as a separate line
 // *To be changed later*
-void ParseAbsoluteDirectoryPath();
+std::vector<std::string> ParseAbsoluteDirectoryPath();
 
 // Not impimented yet
 void SetCurrentDirectory();
@@ -389,7 +389,7 @@ void MoveToDirectory()
 	PrintCurrentDirectory();
 }
 
-void ParseAbsoluteDirectoryPath()
+std::vector<std::string> ParseAbsoluteDirectoryPath()
 {
 	/*
 
@@ -429,22 +429,26 @@ void ParseAbsoluteDirectoryPath()
 		path = path.substr(0, path.length() - 1);
 	}
 
+	std::vector<std::string> parsed;
+
 	// If user entered only a drive
 	int found = path.find_first_of(":\\");
 	if (found == std::string::npos)
 	{
-		std::cout << path << ":\\" << std::endl;
-		return;
+		path += ":\\";
+		std::cout << path << std::endl;
+		parsed.push_back(path);
+		return parsed;
 	}
 
 	// If user entered only a drive and :
 	if (path[path.length() - 1] == ':')
 	{
-		std::cout << path << "\\" << std::endl;
-		return;
+		path += "\\";
+		std::cout << path << std::endl;
+		parsed.push_back(path);
+		return parsed;
 	}
-
-	std::vector<std::string> parsed;
 
 	// Leading drive edge case
 	int index = path.find_first_of("\\");
@@ -483,6 +487,8 @@ void ParseAbsoluteDirectoryPath()
 		std::cout << *parsedIterator << std::endl;
 		++parsedIterator;
 	}
+
+	return parsed;
 }
 
 void ReadDirectory()
@@ -568,32 +574,34 @@ void SetCurrentDirectory()
 	
 	*/
 
-	//std::vector<std::string> parsedDirectoryList = ParseAbsoluteDirectoryPath();
+	std::vector<std::string> parsedDirectoryList = ParseAbsoluteDirectoryPath();
 	
+	std::vector<std::string>::iterator parsedIterator;
+	parsedIterator = parsedDirectoryList.begin();
+
 	std::cout << "beforechdir" << std::endl;
 
-	if (_chdir("F:\\"))
+	while (parsedIterator != parsedDirectoryList.end())
 	{
-		switch (errno)
+		if (_chdir(parsedIterator->c_str()))
 		{
-		case ENOENT:
-			std::cout << "Unable to locate the directory..." << std::endl;
-			break;
-		case EINVAL:
-			std::cout << "Invalid buffer..." << std::endl;
-			break;
-		default:
-			std::cout << "Unknown error..." << std::endl;
-
-			//return -1;
+			switch (errno)
+			{
+			case ENOENT:
+				std::cout << "Unable to locate the directory " << *parsedIterator << "..." << std::endl;
+				return;
+			case EINVAL:
+				std::cout << "Invalid buffer..." << std::endl;
+				return;
+			default:
+				std::cout << "Unknown error..." << std::endl;
+				return;
+			}
 		}
-
-		std::cout << "We made it to the end of chdir" << std::endl;
+		++parsedIterator;
 	}
 
-	std::cout << "ENOENT is " << ENOENT << " and EINVAL is " << EINVAL << std::endl;
 
-	std::cout << "We made it to the outside of chdir" << std::endl;
 	//bool exists = false;
 
 
