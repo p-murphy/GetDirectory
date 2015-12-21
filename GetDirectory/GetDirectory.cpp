@@ -74,7 +74,7 @@ void WriteDirectoryInformation();
 void ParseAbsoluteDirectoryPath();
 
 // Not impimented yet
-void SetCurrentDirectory(char dir[]);
+void SetCurrentDirectory();
 
 // Support function for functions which need raw directory names
 std::vector<std::string> GatherDirectoryInformation();
@@ -278,7 +278,8 @@ void MenuSelection(Directory *dir)
 		std::cout << "7 - Print Current Sub Directories" << std::endl;
 		std::cout << "8 - Move To Directory" << std::endl;
 		std::cout << "9 - Parse Absolute Directory Path" << std::endl;
-		std::cout << "10 - End Program" << std::endl;
+		std::cout << "10 - Set Current Directory" << std::endl;
+		std::cout << "11 - End Program" << std::endl;
 
 		std::cin >> userChoice;
 
@@ -321,6 +322,10 @@ void MenuSelection(Directory *dir)
 			ParseAbsoluteDirectoryPath();
 			break;
 		case 10:
+			std::cout << "User has selected: " << userChoice << std::endl;
+			SetCurrentDirectory();
+			break;
+		case 11:
 			//std::cout << "User has selected: " << userChoice << std::endl;
 			loopControl = false;
 			break;
@@ -540,7 +545,7 @@ void WriteDirectoryInformation()
 }
 
 
-void SetCurrentDirectory(char dir[])
+void SetCurrentDirectory()
 {
 	/*
 
@@ -549,5 +554,78 @@ void SetCurrentDirectory(char dir[])
 	requested is verified as existing, we should move the that directory.
 
 	*/
-	std::cout << "Moving to directory: "<< dir << std::endl;
+
+	/*
+
+	Basic logic: 
+	1. parse user-entered string
+	2. check to see that the first directory exists
+	-if it does, move to it
+	-if it does not, return error
+	3. check to see that the second directory exists
+	-if it does, move to it
+	-if it does not, return error
+	
+	*/
+
+	//std::vector<std::string> parsedDirectoryList = ParseAbsoluteDirectoryPath();
+	
+	std::cout << "beforechdir" << std::endl;
+
+	if (_chdir("F:\\"))
+	{
+		switch (errno)
+		{
+		case ENOENT:
+			printf("Unable to locate the directory \n");
+			break;
+		case EINVAL:
+			printf("Invalid buffer.\n");
+			break;
+		default:
+			printf("Unknown error.\n");
+		}
+
+		std::cout << "We made it to the end of chdir" << std::endl;
+	}
+
+	std::cout << "We made it to the outside of chdir" << std::endl;
+	//bool exists = false;
+
+
+	//std::vector<std::string> dirVect = GatherDirectoryInformation();
+
+	//std::vector<std::string>::const_iterator directoryIterator;
+	//directoryIterator = dirVect.begin();
+
+	//while (directoryIterator != dirVect.end())
+	//{
+	//	if (directoryInput.compare(*directoryIterator) == 0)
+	//	{
+	//		exists = true;
+	//		break;
+	//	}
+
+	//	++directoryIterator;
+	//}
+
+	//if (exists)
+	//{
+
+	//	const char *dir = directoryInput.c_str();
+	//	_chdir(dir);
+	//	PrintCurrentDirectory();
+	//	return;
+	//}
+	//else
+	//{
+	//	std::cout << "Directory not found..." << std::endl;
+	//}
+
+	//const char *dir = directoryInput.c_str();
+	//_chdir(dir);
+	//PrintCurrentDirectory();
+
+
+	//std::cout << "Moving to directory: "<< dir << std::endl;
 }
