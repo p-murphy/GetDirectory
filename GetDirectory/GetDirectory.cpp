@@ -577,17 +577,21 @@ void SetCurrentDirectory()
 		switch (errno)
 		{
 		case ENOENT:
-			printf("Unable to locate the directory \n");
+			std::cout << "Unable to locate the directory..." << std::endl;
 			break;
 		case EINVAL:
-			printf("Invalid buffer.\n");
+			std::cout << "Invalid buffer..." << std::endl;
 			break;
 		default:
-			printf("Unknown error.\n");
+			std::cout << "Unknown error..." << std::endl;
+
+			//return -1;
 		}
 
 		std::cout << "We made it to the end of chdir" << std::endl;
 	}
+
+	std::cout << "ENOENT is " << ENOENT << " and EINVAL is " << EINVAL << std::endl;
 
 	std::cout << "We made it to the outside of chdir" << std::endl;
 	//bool exists = false;
