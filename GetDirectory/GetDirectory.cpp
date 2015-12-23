@@ -259,7 +259,7 @@ void GetParentDirectory(Directory *dir)
 	_chdir(tempDirectory);
 }
 
-void ChangeDirectory(const char *dir);
+int ChangeDirectory(const char *dir);
 
 void MenuSelection(Directory *dir)
 {
@@ -533,88 +533,23 @@ void WriteDirectoryInformation()
 
 void SetCurrentDirectory()
 {
-	/*
-
-	SetCurrentDirectory will first need a support function which uses ParseAbsoluteDirectoryPath,
-	and one other function which can handle relative paths, and use these as input. Once the path
-	requested is verified as existing, we should move the that directory.
-
-	*/
-
-	/*
-
-	Basic logic: 
-	1. parse user-entered string
-	2. check to see that the first directory exists
-	-if it does, move to it
-	-if it does not, return error
-	3. check to see that the second directory exists
-	-if it does, move to it
-	-if it does not, return error
-	
-	*/
-
 	std::vector<std::string> parsedDirectoryList = ParseAbsoluteDirectoryPath();
 	
 	std::vector<std::string>::iterator parsedIterator;
 	parsedIterator = parsedDirectoryList.begin();
 
-	std::cout << "beforechdir" << std::endl;
-
-	/*
-
-	Problem: Will move incrementally to directories that are valid, and stop when finding error.
-	Should probably not move at all if error is found. Meaning that perhaps, we should check the
-	entire directory string is valid before moving at all.
-
-	*/
-
 	for (auto element : parsedDirectoryList)
 	{
-		ChangeDirectory(element.c_str());
+		if (ChangeDirectory(element.c_str()) != 0)
+		{
+			return;
+		}
 	}
 
-	//bool exists = false;
-
-
-	//std::vector<std::string> dirVect = GatherDirectoryInformation();
-
-	//std::vector<std::string>::const_iterator directoryIterator;
-	//directoryIterator = dirVect.begin();
-
-	//while (directoryIterator != dirVect.end())
-	//{
-	//	if (directoryInput.compare(*directoryIterator) == 0)
-	//	{
-	//		exists = true;
-	//		break;
-	//	}
-
-	//	++directoryIterator;
-	//}
-
-	//if (exists)
-	//{
-
-	//	const char *dir = directoryInput.c_str();
-	//	_chdir(dir);
-	//	PrintCurrentDirectory();
-	//	return;
-	//}
-	//else
-	//{
-	//	std::cout << "Directory not found..." << std::endl;
-	//}
-
-	//const char *dir = directoryInput.c_str();
-	//_chdir(dir);
-	//PrintCurrentDirectory();
-
-
-	//std::cout << "Moving to directory: "<< dir << std::endl;
+	PrintCurrentDirectory();
 }
 
-void ChangeDirectory(const char *dir)
+int ChangeDirectory(const char *dir)
 {
 	if (_chdir(dir))
 	{
@@ -622,13 +557,15 @@ void ChangeDirectory(const char *dir)
 		{
 		case ENOENT:
 			std::cout << "Unable to locate the directory " << dir << "..." << std::endl;
-			return;
+			return errno;
 		case EINVAL:
 			std::cout << "Invalid buffer..." << std::endl;
-			return;
+			return errno;
 		default:
 			std::cout << "Unknown error..." << std::endl;
-			return;
+			return errno;
 		}
+
+		return 0;
 	}
 }
