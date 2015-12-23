@@ -58,7 +58,7 @@ void GetParentDirectory(Directory *dir);
 void MenuSelection(Directory *dir);
 
 // Change directory context to arbitrary location
-void MoveToDirectory();
+void MoveToChildDirectory();
 
 // Not implimented yet
 void ReadDirectory();
@@ -315,7 +315,7 @@ void MenuSelection(Directory *dir)
 			break;
 		case 8:
 			std::cout << "User has selected: " << userChoice << std::endl;
-			MoveToDirectory();
+			MoveToChildDirectory();
 			break;
 		case 9:
 			std::cout << "User has selected: " << userChoice << std::endl;
@@ -335,7 +335,7 @@ void MenuSelection(Directory *dir)
 	}
 }
 
-void MoveToDirectory()
+void MoveToChildDirectory()
 {
 	std::string directoryInput;
 	bool exists = false;
@@ -357,23 +357,17 @@ void MoveToDirectory()
 
 	std::vector<std::string> dirVect = GatherDirectoryInformation();
 
-	std::vector<std::string>::const_iterator directoryIterator;
-	directoryIterator = dirVect.begin();
-
-	while (directoryIterator != dirVect.end())
+	for (auto element : dirVect)
 	{
-		if (directoryInput.compare(*directoryIterator) == 0)
+		if (directoryInput.compare(element) == 0)
 		{
 			exists = true;
 			break;
 		}
-
-		++directoryIterator;
 	}
 
 	if (exists)
 	{
-
 		const char *dir = directoryInput.c_str();
 		_chdir(dir);
 		PrintCurrentDirectory();
@@ -383,10 +377,6 @@ void MoveToDirectory()
 	{
 		std::cout << "Directory not found..." << std::endl;
 	}
-
-	const char *dir = directoryInput.c_str();
-	_chdir(dir);
-	PrintCurrentDirectory();
 }
 
 std::vector<std::string> ParseAbsoluteDirectoryPath()
@@ -412,7 +402,6 @@ std::vector<std::string> ParseAbsoluteDirectoryPath()
 	*/
 
 	std::string path;
-
 
 	std::cout << "Please enter a full directory path to parse:" << std::endl;
 
@@ -476,16 +465,10 @@ std::vector<std::string> ParseAbsoluteDirectoryPath()
 		parsed.push_back(path.substr(0, index));
 	}
 
-	//std::cout << "parsed's size is: " << parsed.size() << std::endl;
-
-	std::vector<std::string>::iterator parsedIterator;
-	parsedIterator = parsed.begin();
-
 	// Print parsed directory path to screen
-	while (parsedIterator != parsed.end())
+	for (auto element : parsed)
 	{
-		std::cout << *parsedIterator << std::endl;
-		++parsedIterator;
+		std::cout << element << std::endl;
 	}
 
 	return parsed;
@@ -540,13 +523,9 @@ void WriteDirectoryInformation()
 
 	std::cout << "There are " << dirVect.size() << " directories:" << std::endl;
 
-	std::vector<std::string>::const_iterator directoryIterator;
-	directoryIterator = dirVect.begin();
-
-	while (directoryIterator != dirVect.end())
+	for (auto element : dirVect)
 	{
-		std::cout << *directoryIterator << std::endl;
-		++directoryIterator;
+		std::cout << element << std::endl;
 	}
 }
 
@@ -581,14 +560,22 @@ void SetCurrentDirectory()
 
 	std::cout << "beforechdir" << std::endl;
 
-	while (parsedIterator != parsedDirectoryList.end())
+	/*
+
+	Problem: Will move incrementally to directories that are valid, and stop when finding error.
+	Should probably not move at all if error is found. Meaning that perhaps, we should check the
+	entire directory string is valid before moving at all.
+
+	*/
+
+	for (auto element : parsedDirectoryList)
 	{
-		if (_chdir(parsedIterator->c_str()))
+		if (_chdir(element.c_str()))
 		{
 			switch (errno)
 			{
 			case ENOENT:
-				std::cout << "Unable to locate the directory " << *parsedIterator << "..." << std::endl;
+				std::cout << "Unable to locate the directory " << element << "..." << std::endl;
 				return;
 			case EINVAL:
 				std::cout << "Invalid buffer..." << std::endl;
@@ -598,7 +585,6 @@ void SetCurrentDirectory()
 				return;
 			}
 		}
-		++parsedIterator;
 	}
 
 
