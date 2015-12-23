@@ -504,7 +504,7 @@ std::vector<std::string> GatherDirectoryInformation()
 		buf[length - 1] = '\0';
 		dirVect.push_back(buf);
 	}
-
+	
 	/* Close pipe and print return value of pPipe. */
 	if (feof(pPipe))
 	{
@@ -520,10 +520,10 @@ std::vector<std::string> GatherDirectoryInformation()
 
 void WriteDirectoryInformation()
 {
+	// Fill object with raw, stripped subdirectory names
 	std::vector<std::string> dirVect = GatherDirectoryInformation();
 
-	std::cout << "There are " << dirVect.size() << " directories:" << std::endl;
-
+	// Print to screen
 	for (auto element : dirVect)
 	{
 		std::cout << element << std::endl;
@@ -533,15 +533,24 @@ void WriteDirectoryInformation()
 
 void SetCurrentDirectory()
 {
+	// Fill object with parsed list of directories in path
 	std::vector<std::string> parsedDirectoryList = ParseAbsoluteDirectoryPath();
-	
-	std::vector<std::string>::iterator parsedIterator;
-	parsedIterator = parsedDirectoryList.begin();
 
+	// Save current directory location. In the case that the target path is found
+	// to be invalid, we will return here.
+	Directory *dir = new Directory();
+	GetCurrentDirectory(dir);
+
+	PrintDirectoryObject(dir);
+
+	// For each parsed item, try to go to that. If we fail along the way,
+	// switch back to previously saved directory, and exit the function.
 	for (auto element : parsedDirectoryList)
 	{
 		if (ChangeDirectory(element.c_str()) != 0)
 		{
+			ChangeDirectory(dir->dir);
+			PrintCurrentDirectory();
 			return;
 		}
 	}
