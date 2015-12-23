@@ -259,6 +259,8 @@ void GetParentDirectory(Directory *dir)
 	_chdir(tempDirectory);
 }
 
+void ChangeDirectory(const char *dir);
+
 void MenuSelection(Directory *dir)
 {
 
@@ -368,8 +370,7 @@ void MoveToChildDirectory()
 
 	if (exists)
 	{
-		const char *dir = directoryInput.c_str();
-		_chdir(dir);
+		ChangeDirectory(directoryInput.c_str());
 		PrintCurrentDirectory();
 		return;
 	}
@@ -570,23 +571,8 @@ void SetCurrentDirectory()
 
 	for (auto element : parsedDirectoryList)
 	{
-		if (_chdir(element.c_str()))
-		{
-			switch (errno)
-			{
-			case ENOENT:
-				std::cout << "Unable to locate the directory " << element << "..." << std::endl;
-				return;
-			case EINVAL:
-				std::cout << "Invalid buffer..." << std::endl;
-				return;
-			default:
-				std::cout << "Unknown error..." << std::endl;
-				return;
-			}
-		}
+		ChangeDirectory(element.c_str());
 	}
-
 
 	//bool exists = false;
 
@@ -626,4 +612,23 @@ void SetCurrentDirectory()
 
 
 	//std::cout << "Moving to directory: "<< dir << std::endl;
+}
+
+void ChangeDirectory(const char *dir)
+{
+	if (_chdir(dir))
+	{
+		switch (errno)
+		{
+		case ENOENT:
+			std::cout << "Unable to locate the directory " << dir << "..." << std::endl;
+			return;
+		case EINVAL:
+			std::cout << "Invalid buffer..." << std::endl;
+			return;
+		default:
+			std::cout << "Unknown error..." << std::endl;
+			return;
+		}
+	}
 }
