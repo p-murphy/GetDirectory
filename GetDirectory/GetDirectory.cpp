@@ -20,6 +20,8 @@ public:
 	char *dir;
 	int size = sizeof(directory);
 	bool isNull = false;
+
+	char* GetDirectory() { return dir; }
 };
 
 //// FUNCTIONS ////
@@ -540,8 +542,6 @@ void SetCurrentDirectory()
 	// to be invalid, we will return here.
 	Directory *dir = new Directory();
 	GetCurrentDirectory(dir);
-
-	PrintDirectoryObject(dir);
 
 	// For each parsed item, try to go to that. If we fail along the way,
 	// switch back to previously saved directory, and exit the function.
