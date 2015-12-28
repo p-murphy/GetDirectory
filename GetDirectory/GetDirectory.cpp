@@ -22,6 +22,23 @@ public:
 	bool isNull = false;
 
 	char* GetDirectory() { return dir; }
+
+	void PrintDirectory()
+	{
+		if (dir == nullptr)
+		{
+			std::cout << "Error: Directory object is not initialized..." << std::endl;
+			return;
+		}
+
+		if (isNull == true)
+		{
+			std::cout << "Null directory..." << std::endl;
+			return;
+		}
+
+		std::cout << directory << std::endl;
+	}
 };
 
 //// FUNCTIONS ////
@@ -283,7 +300,8 @@ void MenuSelection(Directory *dir)
 		std::cout << "8 - Move To Directory" << std::endl;
 		std::cout << "9 - Parse Absolute Directory Path" << std::endl;
 		std::cout << "10 - Set Current Directory" << std::endl;
-		std::cout << "11 - End Program" << std::endl;
+		std::cout << "11 - Print Loaded Directory Information Using Member Function" << std::endl;
+		std::cout << "12 - End Program" << std::endl;
 
 		std::cin >> userChoice;
 
@@ -330,6 +348,10 @@ void MenuSelection(Directory *dir)
 			SetCurrentDirectory();
 			break;
 		case 11:
+			std::cout << "User has selected: " << userChoice << std::endl;
+			dir->PrintDirectory();
+			break;
+		case 12:
 			//std::cout << "User has selected: " << userChoice << std::endl;
 			loopControl = false;
 			break;
