@@ -39,6 +39,11 @@ public:
 
 		std::cout << directory << std::endl;
 	}
+
+	void StoreCurrentDirectory()
+	{
+		dir = _getcwd(directory, size);
+	}
 };
 
 //// FUNCTIONS ////
