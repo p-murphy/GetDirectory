@@ -97,16 +97,22 @@ void WriteDirectoryInformation();
 // *To be changed later*
 std::vector<std::string> ParseAbsoluteDirectoryPath();
 
-// Not impimented yet
+// Not implemented yet
 void SetCurrentDirectory();
+
+// Support function which changes current directory context
+int ChangeDirectory(const char *dir);
 
 // Support function for functions which need raw directory names
 std::vector<std::string> GatherDirectoryInformation();
 
+// Support function to flush buffer
 void flushBuffer();
 
+// Clears trailing backslashes from std::strings
 void cullBackslash(std::string &path);
 
+// Clears trailing backslashes from c_strings
 void cullBackslash(char* path, int length);
 
 int _tmain(int argc, _TCHAR* argv[])
@@ -149,10 +155,6 @@ void PrintParentDirectory()
 	int currentDirectoryLength = strlen(currentDirectory);
 
 	// Remove possible trailing backslash on path string
-	//if (currentDirectory[currentDirectoryLength - 1] == '\\')
-	//{
-	//	currentDirectory[currentDirectoryLength - 1] = '\0';
-	//}
 	cullBackslash(currentDirectory, currentDirectoryLength);
 
 	// Isolate directory leaf at end of path
@@ -163,7 +165,6 @@ void PrintParentDirectory()
 	{
 		// We are at the root of the directory.
 		// Return root to align with cd behavior.
-		//std::cout << "currentDirectoryLength is " << currentDirectoryLength << std::endl;
 		currentDirectory[currentDirectoryLength - 1] = '\\';
 		currentDirectory[currentDirectoryLength] = '\0';
 		std::cout << currentDirectory << std::endl; 
@@ -246,10 +247,7 @@ void GetParentDirectory(Directory *dir)
 	int currentDirectoryLength = strlen(currentDirectory);
 
 	// Remove possible trailing backslash on path string
-	if (currentDirectory[currentDirectoryLength - 1] == '\\')
-	{
-		currentDirectory[currentDirectoryLength - 1] = '\0';
-	}
+	cullBackslash(currentDirectory, currentDirectoryLength);
 
 	// Identify directory leaf
 	char *finalBackslash;
@@ -289,8 +287,6 @@ void GetParentDirectory(Directory *dir)
 	// Return to original directory
 	_chdir(tempDirectory);
 }
-
-int ChangeDirectory(const char *dir);
 
 void MenuSelection(Directory *dir)
 {
@@ -381,31 +377,23 @@ void MoveToChildDirectory()
 	std::cout << "Please enter the directory you would like to move to:" << std::endl;
 
 	// Flush buffer
-	//flushBuffer();
-	std::cin.clear();
-	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	flushBuffer();
 
 	// Gather user input
 	std::getline(std::cin, directoryInput);
 
-	std::cout << "INPUT: |" << directoryInput << "|" << std::endl;
-
-	if (directoryInput.empty())
-	{
-		return;
-	}
+	// If user simply pressed enter, return
+	if (directoryInput.empty()){ return; }
 
 	// Remove possible trailing backslash on path string
 	cullBackslash(directoryInput);
 
-	std::cout << "OUTSIDE: |" << directoryInput << "|" << std::endl;
-
+	// Collect sub directory info
 	std::vector<std::string> dirVect = GatherDirectoryInformation();
 
+	// Verify that entire path is valid
 	for (auto element : dirVect)
 	{
-		std::cout << "ELEMENT: |" << element << "|" << std::endl;
-
 		if (directoryInput.compare(element) == 0)
 		{
 			exists = true;
@@ -413,6 +401,7 @@ void MoveToChildDirectory()
 		}
 	}
 
+	// Move to directory if valid, if not, print error
 	if (exists)
 	{
 		ChangeDirectory(directoryInput.c_str());
@@ -458,10 +447,7 @@ std::vector<std::string> ParseAbsoluteDirectoryPath()
 	std::getline(std::cin, path);
 
 	// Remove possible trailing backslash on path string
-	if (path[path.length() - 1] == '\\')
-	{
-		path = path.substr(0, path.length() - 1);
-	}
+	cullBackslash(path);
 
 	std::vector<std::string> parsed;
 
@@ -573,7 +559,6 @@ void WriteDirectoryInformation()
 		std::cout << element << std::endl;
 	}
 }
-
 
 void SetCurrentDirectory()
 {
