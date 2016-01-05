@@ -113,4 +113,6 @@ void cullBackslash(std::string &path);
 // Clears trailing backslashes from c_strings
 void cullBackslash(char* path, int length);
 
+void PrintFileNamesInCurrentDirectory();
+
 #endif

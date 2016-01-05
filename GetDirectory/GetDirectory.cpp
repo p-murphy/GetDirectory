@@ -185,7 +185,8 @@ void MenuSelection(Directory *dir)
 		std::cout << "9 - Parse Absolute Directory Path" << std::endl;
 		std::cout << "10 - Set Current Directory" << std::endl;
 		std::cout << "11 - Print Loaded Directory Information Using Member Function" << std::endl;
-		std::cout << "12 - End Program" << std::endl;
+		std::cout << "12 - Print files in current directory" << std::endl;
+		std::cout << "13 - End Program" << std::endl;
 
 		std::cin >> userChoice;
 
@@ -236,6 +237,10 @@ void MenuSelection(Directory *dir)
 			dir->PrintDirectory();
 			break;
 		case 12:
+			std::cout << "User has selected: " << userChoice << std::endl;
+			PrintFileNamesInCurrentDirectory();
+			break;
+		case 13:
 			//std::cout << "User has selected: " << userChoice << std::endl;
 			loopControl = false;
 			break;
@@ -499,5 +504,42 @@ void cullBackslash(char* path, int length)
 	if (path[length - 1] == '\\')
 	{
 		path[length - 1] = '\0';
+	}
+}
+
+void PrintFileNamesInCurrentDirectory()
+{
+	char buf[FILENAME_MAX];
+	FILE *pPipe;
+	std::vector<std::string> dirVect;
+	int length;
+
+	// The command "dir /a-d /b /oe" returns only raw file names, with extensions, and nothing else at all.
+	// See dir help in cmd for more information.
+	if ((pPipe = _popen("dir /a-d /b /oe", "rt")) == NULL)
+		exit(1);
+
+	// Fill string vector with file names
+	while (fgets(buf, FILENAME_MAX, pPipe))
+	{
+		length = strlen(buf);
+		buf[length - 1] = '\0';
+		std::cout << "|||" << buf << std::endl;
+		dirVect.push_back(buf);
+	}
+
+	/* Close pipe and print return value of pPipe. */
+	if (feof(pPipe))
+	{
+		//std::cout << "All good." << std::endl;
+	}
+	else
+	{
+		std::cout << "Error: Failed to read the pipe to the end." << std::endl;
+	}
+
+	for (auto element : dirVect)
+	{
+		std::cout << element << std::endl;
 	}
 }
