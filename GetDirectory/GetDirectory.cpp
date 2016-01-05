@@ -190,7 +190,6 @@ void MenuSelection(Directory *dir)
 		std::cout << "13 - End Program" << std::endl;
 
 		std::cout << "21 - Run 1" << std::endl;
-		std::cout << "22 - Run 2" << std::endl;
 
 		std::cin >> userChoice;
 
@@ -251,10 +250,6 @@ void MenuSelection(Directory *dir)
 		case 21:
 			//std::cout << "User has selected: " << userChoice << std::endl;
 			Run();
-			break;
-		case 22:
-			//std::cout << "User has selected: " << userChoice << std::endl;
-			Run2();
 			break;
 		default:
 			break;
