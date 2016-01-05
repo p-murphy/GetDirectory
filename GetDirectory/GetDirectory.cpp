@@ -87,9 +87,6 @@ void MoveToChildDirectory();
 // Not implimented yet
 void ReadDirectory();
 
-// Prints only the subdirectories in the current directory
-void PrintDirectoryDirectories();
-
 // Like PrintDirectoryDirectories, but writes only raw Directory names, and nothing else at all
 void WriteDirectoryInformation();
 
@@ -508,11 +505,6 @@ std::vector<std::string> ParseAbsoluteDirectoryPath()
 void ReadDirectory()
 {
 
-}
-
-void PrintDirectoryDirectories()
-{
-	system("dir /ad-l");
 }
 
 std::vector<std::string> GatherDirectoryInformation()
