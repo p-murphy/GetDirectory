@@ -13,6 +13,7 @@
 #include <iostream>
 
 #include "GetDirectory.h"
+#include "FileHandler.h"
 
 int _tmain(int argc, _TCHAR* argv[])
 {

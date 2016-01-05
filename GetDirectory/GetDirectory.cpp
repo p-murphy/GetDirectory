@@ -12,6 +12,7 @@
 #include <iostream>
 
 #include "GetDirectory.h"
+#include "FileHandler.h"
 
 void GetCurrentDirectory(Directory *dir)
 {
@@ -188,6 +189,9 @@ void MenuSelection(Directory *dir)
 		std::cout << "12 - Print files in current directory" << std::endl;
 		std::cout << "13 - End Program" << std::endl;
 
+		std::cout << "21 - Run 1" << std::endl;
+		std::cout << "22 - Run 2" << std::endl;
+
 		std::cin >> userChoice;
 
 		switch (userChoice)
@@ -243,6 +247,14 @@ void MenuSelection(Directory *dir)
 		case 13:
 			//std::cout << "User has selected: " << userChoice << std::endl;
 			loopControl = false;
+			break;
+		case 21:
+			//std::cout << "User has selected: " << userChoice << std::endl;
+			Run();
+			break;
+		case 22:
+			//std::cout << "User has selected: " << userChoice << std::endl;
+			Run2();
 			break;
 		default:
 			break;
@@ -509,6 +521,8 @@ void cullBackslash(char* path, int length)
 
 void PrintFileNamesInCurrentDirectory()
 {
+	// TO FIX: Case where there are no files in directory
+
 	char buf[FILENAME_MAX];
 	FILE *pPipe;
 	std::vector<std::string> dirVect;
@@ -524,7 +538,6 @@ void PrintFileNamesInCurrentDirectory()
 	{
 		length = strlen(buf);
 		buf[length - 1] = '\0';
-		std::cout << "|||" << buf << std::endl;
 		dirVect.push_back(buf);
 	}
 

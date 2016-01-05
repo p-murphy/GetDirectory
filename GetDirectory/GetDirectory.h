@@ -115,4 +115,6 @@ void cullBackslash(char* path, int length);
 
 void PrintFileNamesInCurrentDirectory();
 
+void Run();
+
 #endif
