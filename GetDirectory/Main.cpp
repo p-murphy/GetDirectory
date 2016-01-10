@@ -10,7 +10,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
-#include <iostream>
 
 #include "GetDirectory.h"
 #include "FileHandler.h"

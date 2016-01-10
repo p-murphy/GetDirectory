@@ -189,7 +189,7 @@ void MenuSelection(Directory *dir)
 		std::cout << "12 - Print files in current directory" << std::endl;
 		std::cout << "13 - End Program" << std::endl;
 
-		std::cout << "21 - Run 1" << std::endl;
+		std::cout << "21 - Run Program with File Name" << std::endl;
 
 		std::cin >> userChoice;
 
